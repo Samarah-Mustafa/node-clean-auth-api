@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { RegisterUserUseCase } from '../../use-cases/RegisterUser.js';
 
 export class RegisterUserController {
-  constructor(private registerUserUseCase: RegisterUserUseCase) {}
+  constructor(private readonly registerUserUseCase: RegisterUserUseCase) {}
 
   async handle(req: Request, res: Response): Promise<Response> {
     try {

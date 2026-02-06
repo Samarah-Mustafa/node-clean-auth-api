@@ -1,4 +1,5 @@
-node-clean-auth-api
+# node-clean-auth-api
+
 🔐 API de Autenticação robusta desenvolvida com Node.js, TypeScript e SQLite. Aplicando Clean Architecture, princípios SOLID e as melhores práticas de segurança (JWT & Bcrypt).
 
 💻 Sobre o Projeto
@@ -151,6 +152,99 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     "iat": 1707228800,
     "exp": 1707315200
   }
+}
+```
+
+---
+
+### 4️⃣ Atualizar Perfil
+
+**Método:** `PATCH`  
+**URL:** `http://localhost:3333/me`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer <seu_token_jwt_aqui>
+```
+
+**Body (JSON):**
+```json
+{
+  "name": "João Silva Editado"
+}
+```
+
+**Resposta Esperada (200):**
+```json
+{
+  "message": "User updated successfully"
+}
+```
+
+---
+
+### 5️⃣ Deletar Conta
+
+**Método:** `DELETE`  
+**URL:** `http://localhost:3333/me`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer <seu_token_jwt_aqui>
+```
+
+**Resposta Esperada (200):**
+```json
+{
+  "message": "User deleted successfully"
+}
+```
+
+---
+
+### 6️⃣ Refresh Token
+
+**Método:** `POST`  
+**URL:** `http://localhost:3333/refresh-token`
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body (JSON):**
+```json
+{
+  "refreshToken": "<seu_refresh_token_aqui>"
+}
+```
+
+**Resposta Esperada (200):**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+---
+
+### 7️⃣ Logout
+
+**Método:** `POST`  
+**URL:** `http://localhost:3333/logout`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer <seu_token_jwt_aqui>
+```
+
+**Resposta Esperada (200):**
+```json
+{
+  "message": "Logged out successfully"
 }
 ```
 

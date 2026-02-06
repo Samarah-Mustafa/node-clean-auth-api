@@ -3,7 +3,8 @@ import type { IEncrypter } from '../domain/adapters/IEncrypter.js';
 import type { ITokenProvider } from '../domain/adapters/ITokenProvider.js';
 
 export interface LoginResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   email: string;
   name: string;
 }
@@ -33,15 +34,15 @@ export class LoginUserUseCase {
       throw new Error('Senha incorreta.');
     }
 
-    // 3. Gera o token JWT
-    const token = await this.tokenProvider.sign(
-      { id: user.props.id, email: user.email },
-      '24h'
-    );
+    // 3. Gera os tokens JWT
+    const payload = { id: user.props.id, email: user.email };
+    const accessToken = await this.tokenProvider.signAccessToken(payload);
+    const refreshToken = await this.tokenProvider.signRefreshToken(payload);
 
-    // 4. Retorna o token e dados do usuário
+    // 4. Retorna os tokens e dados do usuário
     return {
-      token,
+      accessToken,
+      refreshToken,
       email: user.email,
       name: user.name,
     };

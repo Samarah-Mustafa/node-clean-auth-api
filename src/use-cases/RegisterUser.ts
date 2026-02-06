@@ -1,7 +1,7 @@
 // src/use-cases/RegisterUser.ts
-import { User, UserProps } from "../domain/entities/User";
-import { IUserRepository } from "../domain/repositories/IUserRepository";
-import { IEncrypter } from "../domain/adapters/IEncrypter";
+import { User, type UserProps } from "../domain/entities/User.js";
+import type { IUserRepository } from "../domain/repositories/IUserRepository.js";
+import type { IEncrypter } from "../domain/adapters/IEncrypter.js";
 
 export class RegisterUserUseCase {
   // Recebemos as interfaces, não as classes reais (SOLID - DIP)

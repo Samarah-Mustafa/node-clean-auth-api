@@ -6,8 +6,8 @@ import type { IEncrypter } from "../domain/adapters/IEncrypter.js";
 export class RegisterUserUseCase {
   // Recebemos as interfaces, não as classes reais (SOLID - DIP)
   constructor(
-    private userRepository: IUserRepository,
-    private encrypter: IEncrypter
+    private readonly userRepository: IUserRepository,
+    private readonly encrypter: IEncrypter
   ) {}
 
   async execute(data: UserProps): Promise<void> {

@@ -2,7 +2,7 @@ import 'dotenv/config'; // Carrega as variáveis do .env automaticamente
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { router } from './routes'; // Importe aqui
+import { router } from './routes.js';
 const app = express();
 
 // Middlewares de segurança e utilidades

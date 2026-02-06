@@ -1,5 +1,4 @@
-// src/domain/repositories/IUserRepository.ts
-import { User } from "../entities/User";
+import type { User } from "../../domain/entities/User.js";
 
 export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;

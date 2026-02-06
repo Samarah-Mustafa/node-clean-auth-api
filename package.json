@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Samarah-Mustafa/node-clean-auth-api#readme",
   "description": "",
+  "type": "module",
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",

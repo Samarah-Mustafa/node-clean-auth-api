@@ -1,4 +1,11 @@
+export interface TokenPayload {
+  id: string;
+  email: string;
+}
+
 export interface ITokenProvider {
-  sign(payload: Record<string, any>, expiresIn?: string): Promise<string>;
-  verify(token: string): Promise<Record<string, any>>;
+  sign(payload: TokenPayload, expiresIn?: string): Promise<string>;
+  verify(token: string): Promise<TokenPayload>;
+  signAccessToken(payload: TokenPayload): Promise<string>;
+  signRefreshToken(payload: TokenPayload): Promise<string>;
 }

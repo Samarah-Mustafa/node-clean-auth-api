@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import type { IUserRepository } from "../../domain/repositories/IUserRepository.js";
+import type { IUserRepository, UpdateUserData } from "../../domain/repositories/IUserRepository.js";
 import { User } from "../../domain/entities/User.js";
 import { db } from "../database/connection.js";
 
@@ -26,5 +26,13 @@ export class SqliteUserRepository implements IUserRepository {
       email: user.props.email,
       password: user.props.password
     });
+  }
+
+  async update(userId: string, data: UpdateUserData): Promise<void> {
+    await db('users').where({ id: userId }).update(data);
+  }
+
+  async delete(userId: string): Promise<void> {
+    await db('users').where({ id: userId }).delete();
   }
 }

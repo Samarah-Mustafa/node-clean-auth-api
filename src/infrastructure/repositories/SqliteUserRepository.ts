@@ -15,7 +15,8 @@ export class SqliteUserRepository implements IUserRepository {
       id: userData.id,
       name: userData.name,
       email: userData.email,
-      password: userData.password
+      password: userData.password,
+      isVerified: Boolean(userData.is_verified) // Converte 1/0 do SQLite para boolean
     });
   }
 

@@ -259,7 +259,22 @@ Authorization: Bearer <seu_token_jwt_aqui>
 | `Senha incorreta` | Senha errada | Verifique a senha digitada |
 | `Token não fornecido` | Header `Authorization` ausente | Adicione o header com o token |
 | `Token inválido ou expirado` | Token incorreto ou expirado | Faça login novamente |
+| `Unknown file extension ".ts"` | Node tentando carregar TS como ESM sem loader | Use o comando com loader (veja abaixo) |
 
 ---
+
+### 🛠️ Comandos Úteis (Correção para ESM)
+
+Se você receber o erro `Unknown file extension ".ts"`, use os comandos abaixo para rodar o Knex:
+
+**Windows (PowerShell):**
+```powershell
+$env:NODE_OPTIONS="--loader ts-node/esm"; npx knex migrate:latest
+```
+
+**Linux / Mac / Git Bash:**
+```bash
+NODE_OPTIONS="--loader ts-node/esm" npx knex migrate:latest
+```
 
 Desenvolvido por Samarah mustafá.

@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { SqliteUserRepository } from '../infrastructure/repositories/SqliteUserRepository.js';
 import { BcryptAdapter } from '../infrastructure/adapters/BcryptAdapter.js';
 import { JwtAdapter } from '../infrastructure/adapters/JwtAdapter.js';
-import { InMemoryTokenBlacklistRepository } from '../infrastructure/repositories/InMemoryTokenBlacklistRepository.js';
+import { RedisTokenBlacklistRepository } from '../infrastructure/repositories/RedisTokenBlacklistRepository.js';
 import { RegisterUserUseCase } from '../use-cases/RegisterUser.js';
 import { LoginUserUseCase } from '../use-cases/LoginUser.js';
 import { RefreshTokenUseCase } from '../use-cases/RefreshToken.js';
@@ -15,7 +15,7 @@ import { ResetPasswordUseCase } from '../use-cases/ResetPassword.js';
 import { ConfirmEmailUseCase } from '../use-cases/ConfirmEmail.js';
 import { ResendConfirmationEmailUseCase } from '../use-cases/ResendConfirmationEmail.js';
 import { NodemailerAdapter } from '../infrastructure/adapters/NodemailerAdapter.js';
-import { InMemoryPasswordResetTokenRepository } from '../infrastructure/repositories/InMemoryPasswordResetTokenRepository.js';
+import { RedisPasswordResetTokenRepository } from '../infrastructure/repositories/RedisPasswordResetTokenRepository.js';
 import { RegisterUserController } from '../presentation/controllers/RegisterUserController.js';
 import { LoginUserController } from '../presentation/controllers/LoginUserController.js';
 import { RefreshTokenController } from '../presentation/controllers/RefreshTokenController.js';
@@ -35,9 +35,9 @@ const router = Router();
 const userRepository = new SqliteUserRepository();
 const encrypter = new BcryptAdapter(12); // Salt para bcrypt
 const tokenProvider = new JwtAdapter(process.env.JWT_SECRET || 'seu-secret-seguro'); // Chave JWT
-const tokenBlacklistRepository = new InMemoryTokenBlacklistRepository();
+const tokenBlacklistRepository = new RedisTokenBlacklistRepository();
 const emailService = new NodemailerAdapter();
-const passwordResetTokenRepository = new InMemoryPasswordResetTokenRepository();
+const passwordResetTokenRepository = new RedisPasswordResetTokenRepository();
 
 // Casos de Uso
 const registerUserUseCase = new RegisterUserUseCase(userRepository, encrypter, emailService, tokenProvider);
@@ -47,7 +47,7 @@ const logoutUserUseCase = new LogoutUserUseCase(tokenBlacklistRepository);
 const updateUserUseCase = new UpdateUserUseCase(userRepository, encrypter);
 const deleteUserUseCase = new DeleteUserUseCase(userRepository);
 const forgotPasswordUseCase = new ForgotPasswordUseCase(userRepository, tokenProvider, emailService, passwordResetTokenRepository);
-const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, tokenProvider, encrypter);
+const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, tokenProvider, encrypter, passwordResetTokenRepository);
 const confirmEmailUseCase = new ConfirmEmailUseCase(userRepository, tokenProvider);
 const resendConfirmationEmailUseCase = new ResendConfirmationEmailUseCase(userRepository, tokenProvider, emailService);
 

@@ -24,6 +24,11 @@ export class LoginUserUseCase {
       throw new Error('Usuário não encontrado.');
     }
 
+    // Verifica se o e-mail foi confirmado
+    if (!user.isVerified) {
+      throw new Error('Por favor, confirme seu e-mail antes de fazer login.');
+    }
+
     // 2. Valida a senha comparando com o hash armazenado
     const passwordMatches = await this.encrypter.compare(
       password,

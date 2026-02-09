@@ -250,6 +250,27 @@ Authorization: Bearer <seu_token_jwt_aqui>
 
 ---
 
+### 9️⃣ Reenviar E-mail de Confirmação
+
+**Método:** `POST`  
+**URL:** `http://localhost:3333/resend-confirmation`
+
+**Body (JSON):**
+```json
+{
+  "email": "joao@example.com"
+}
+```
+
+**Resposta Esperada (200):**
+```json
+{
+  "message": "E-mail de confirmação reenviado com sucesso."
+}
+```
+
+---
+
 ### ⚠️ Erros Comuns
 
 | Erro | Causa | Solução |

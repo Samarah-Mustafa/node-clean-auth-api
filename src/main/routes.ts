@@ -13,6 +13,7 @@ import { DeleteUserUseCase } from '../use-cases/DeleteUser.js';
 import { ForgotPasswordUseCase } from '../use-cases/ForgotPassword.js';
 import { ResetPasswordUseCase } from '../use-cases/ResetPassword.js';
 import { ConfirmEmailUseCase } from '../use-cases/ConfirmEmail.js';
+import { ResendConfirmationEmailUseCase } from '../use-cases/ResendConfirmationEmail.js';
 import { NodemailerAdapter } from '../infrastructure/adapters/NodemailerAdapter.js';
 import { InMemoryPasswordResetTokenRepository } from '../infrastructure/repositories/InMemoryPasswordResetTokenRepository.js';
 import { RegisterUserController } from '../presentation/controllers/RegisterUserController.js';
@@ -24,8 +25,9 @@ import { DeleteUserController } from '../presentation/controllers/DeleteUserCont
 import { ForgotPasswordController } from '../presentation/controllers/ForgotPasswordController.js';
 import { ResetPasswordController } from '../presentation/controllers/ResetPasswordController.js';
 import { ConfirmEmailController } from '../presentation/controllers/ConfirmEmailController.js';
+import { ResendConfirmationEmailController } from '../presentation/controllers/ResendConfirmationEmailController.js';
 import { AuthMiddleware } from './middleware/AuthMiddleware.js';
-import { authRateLimiter, apiRateLimiter } from './middleware/RateLimiterMiddleware.js';
+import { authRateLimiter, apiRateLimiter, emailRateLimiter } from './middleware/RateLimiterMiddleware.js';
 
 const router = Router();
 
@@ -47,6 +49,7 @@ const deleteUserUseCase = new DeleteUserUseCase(userRepository);
 const forgotPasswordUseCase = new ForgotPasswordUseCase(userRepository, tokenProvider, emailService, passwordResetTokenRepository);
 const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, tokenProvider, encrypter);
 const confirmEmailUseCase = new ConfirmEmailUseCase(userRepository, tokenProvider);
+const resendConfirmationEmailUseCase = new ResendConfirmationEmailUseCase(userRepository, tokenProvider, emailService);
 
 // Controllers
 const registerUserController = new RegisterUserController(registerUserUseCase);
@@ -58,6 +61,7 @@ const deleteUserController = new DeleteUserController(deleteUserUseCase);
 const forgotPasswordController = new ForgotPasswordController(forgotPasswordUseCase);
 const resetPasswordController = new ResetPasswordController(resetPasswordUseCase);
 const confirmEmailController = new ConfirmEmailController(confirmEmailUseCase);
+const resendConfirmationEmailController = new ResendConfirmationEmailController(resendConfirmationEmailUseCase);
 
 // Middlewares
 const authMiddleware = new AuthMiddleware(tokenProvider, tokenBlacklistRepository);
@@ -78,13 +82,16 @@ router.post('/refresh-token', (req, res) => refreshTokenController.handle(req, r
 router.post('/logout', (req, res) => logoutUserController.handle(req, res));
 
 // Rota de Recuperação de Senha
-router.post('/forgot-password', (req, res) => forgotPasswordController.handle(req, res));
+router.post('/forgot-password', emailRateLimiter, (req, res) => forgotPasswordController.handle(req, res));
 
 // Rota de Redefinição de Senha (Troca efetiva)
 router.post('/reset-password', (req, res) => resetPasswordController.handle(req, res));
 
 // Rota de Confirmação de E-mail
 router.get('/confirm-email', (req, res) => confirmEmailController.handle(req, res));
+
+// Rota de Reenvio de Confirmação
+router.post('/resend-confirmation', emailRateLimiter, (req, res) => resendConfirmationEmailController.handle(req, res));
 
 // Rota de Atualização de Perfil
 router.patch('/me', 

@@ -1,0 +1,27 @@
+services:
+  # Serviço do Redis
+  redis:
+    image: redis:alpine
+    # --appendonly yes: Ativa a persistência AOF (salva dados no disco)
+    # --requirepass: Define a senha de acesso (AUTH)
+    command: redis-server --appendonly yes --requirepass "MinhaSenhaSuperSegura123"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data # Garante que os dados persistam mesmo se o container for destruído
+
+  # Sua API
+  api:
+    build: .
+    ports:
+      - "3333:3333"
+    environment:
+      # Conecta no host 'redis' usando a senha configurada acima
+      - REDIS_URL=redis://:MinhaSenhaSuperSegura123@redis:6379
+      - JWT_SECRET=seu_segredo_jwt
+      - PORT=3333
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:

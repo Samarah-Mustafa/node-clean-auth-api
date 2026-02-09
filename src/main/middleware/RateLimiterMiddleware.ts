@@ -13,3 +13,10 @@ export const authRateLimiter = rateLimit({
   max: 10, // Limite de 10 tentativas por hora
   message: { error: 'Muitas tentativas de login, tente novamente em uma hora.' }
 });
+
+// Limitador para rotas de envio de e-mail (Recuperação/Confirmação)
+export const emailRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hora
+  max: 5, // Limite de 5 e-mails por hora por IP
+  message: { error: 'Muitas solicitações de e-mail, tente novamente em uma hora.' }
+});

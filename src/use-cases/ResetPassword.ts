@@ -21,6 +21,6 @@ export class ResetPasswordUseCase {
     const hashedPassword = await this.encrypter.hash(newPassword);
 
     // 4. Atualiza a senha no repositório
-    await this.userRepository.update(payload.id, { password: hashedPassword });
+    await this.userRepository.update(payload.id, { password: hashedPassword, isVerified: true });
   }
 }

@@ -42,21 +42,20 @@ Response retorna o token JWT ao cliente.
 
 🔐 Melhores Práticas de Segurança
 Hash de Senha (Bcrypt): Nenhuma senha é armazenada em texto plano. O Bcrypt gera hashes com salt seguro.
-
 Autenticação JWT: Uso de JSON Web Tokens para stateless authentication.
-
+Blacklist de Tokens (Redis): Tokens JWT são invalidados no logout, impedindo o reuso.
+Tokens de Uso Único (Redis): Tokens de recuperação de senha e confirmação de e-mail são armazenados no Redis com expiração automática e invalidados após o uso para prevenir ataques de replay.
 Proteção de Rotas: Middlewares que interceptam rotas sensíveis e validam tokens.
-
 Variáveis de Ambiente: Uso de .env para proteger segredos e chaves mestras.
-
 Prevenção contra SQL Injection: Uso de Query Builder com prepared statements via Knex/SQLite.
+Rate Limiting: Limita o número de tentativas de login e envio de e-mails para prevenir ataques de força bruta e spam.
 
 🗄️ Stack Tecnológico
 Node.js & TypeScript: Alta performance e tipagem forte.
-
 SQLite: Banco de dados leve, ideal para aplicações embutidas.
-
+Redis: Gerenciamento de cache e armazenamento de tokens para blacklist e recuperação de senha.
 JWT & Bcrypt: Padrões da indústria para autenticação e hash.
+Docker & Docker Compose: Containerização da aplicação e do banco de dados para um ambiente de desenvolvimento e produção consistente.
 
 ⚙️ Como Executar
 Instalação: npm install
@@ -95,7 +94,24 @@ Content-Type: application/json
 
 ---
 
-### 2️⃣ Fazer Login
+### 2️⃣ Confirmar E-mail
+
+**Método:** `GET`  
+**URL:** `http://localhost:3333/confirm-email?token=<token_enviado_no_email>`
+
+**Exemplo de URL:**
+```
+http://localhost:3333/confirm-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**Resposta Esperada (200):**
+```json
+{ "message": "E-mail confirmado com sucesso." }
+```
+
+---
+
+### 3️⃣ Fazer Login
 
 **Método:** `POST`  
 **URL:** `http://localhost:3333/login`
@@ -116,7 +132,8 @@ Content-Type: application/json
 **Resposta Esperada (200):**
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "email": "joao@example.com",
   "name": "João Silva"
 }
@@ -126,7 +143,7 @@ Content-Type: application/json
 
 ---
 
-### 3️⃣ Acessar Rota Protegida
+### 4️⃣ Acessar Rota Protegida
 
 **Método:** `GET`  
 **URL:** `http://localhost:3333/me`
@@ -157,7 +174,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ---
 
-### 4️⃣ Atualizar Perfil
+### 5️⃣ Atualizar Perfil
 
 **Método:** `PATCH`  
 **URL:** `http://localhost:3333/me`
@@ -184,7 +201,7 @@ Authorization: Bearer <seu_token_jwt_aqui>
 
 ---
 
-### 5️⃣ Deletar Conta
+### 6️⃣ Deletar Conta
 
 **Método:** `DELETE`  
 **URL:** `http://localhost:3333/me`
@@ -204,7 +221,7 @@ Authorization: Bearer <seu_token_jwt_aqui>
 
 ---
 
-### 6️⃣ Refresh Token
+### 7️⃣ Refresh Token
 
 **Método:** `POST`  
 **URL:** `http://localhost:3333/refresh-token`
@@ -230,7 +247,7 @@ Content-Type: application/json
 
 ---
 
-### 7️⃣ Logout
+### 8️⃣ Logout
 
 **Método:** `POST`  
 **URL:** `http://localhost:3333/logout`
@@ -250,7 +267,48 @@ Authorization: Bearer <seu_token_jwt_aqui>
 
 ---
 
-### 9️⃣ Reenviar E-mail de Confirmação
+### 9️⃣ Esquecer a Senha
+
+**Método:** `POST`  
+**URL:** `http://localhost:3333/forgot-password`
+
+**Body (JSON):**
+```json
+{
+  "email": "joao@example.com"
+}
+```
+
+**Resposta Esperada (200):**
+```json
+{
+  "message": "Se o e-mail estiver registrado, um link de recuperação será enviado."
+}
+```
+
+---
+
+### 1️⃣0️⃣ Redefinir a Senha
+
+**Método:** `POST`  
+**URL:** `http://localhost:3333/reset-password`
+
+**Body (JSON):**
+```json
+{
+  "token": "<token_enviado_no_email_de_recuperacao>",
+  "newPassword": "NovaSenha@123"
+}
+```
+
+**Resposta Esperada (200):**
+```json
+{ "message": "Senha redefinida com sucesso." }
+```
+
+---
+
+### 1️⃣1️⃣ Reenviar E-mail de Confirmação
 
 **Método:** `POST`  
 **URL:** `http://localhost:3333/resend-confirmation`
@@ -284,18 +342,13 @@ Authorization: Bearer <seu_token_jwt_aqui>
 
 ---
 
-### 🛠️ Comandos Úteis (Correção para ESM)
+### 🛠️ Comandos Úteis (Knex)
 
-Se você receber o erro `Unknown file extension ".ts"`, use os comandos abaixo para rodar o Knex:
+Para executar migrações e seeds do banco de dados, use os scripts configurados no `package.json`:
 
-**Windows (PowerShell):**
-```powershell
-$env:NODE_OPTIONS="--loader ts-node/esm"; npx knex migrate:latest
-```
-
-**Linux / Mac / Git Bash:**
+**Rodar as últimas migrações:**
 ```bash
-NODE_OPTIONS="--loader ts-node/esm" npx knex migrate:latest
+npm run knex migrate:latest
 ```
 
 Desenvolvido por Samarah mustafá.

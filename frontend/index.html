@@ -1,0 +1,65 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Auth API</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Demo Auth API</h1>
+
+        <!-- Área de Notificações/Logs -->
+        <div id="response-log" class="log-box">Logs da API aparecerão aqui...</div>
+
+        <!-- Seção de Autenticação (Login/Registro) -->
+        <div id="auth-section">
+            <div class="tabs">
+                <button onclick="showTab('login')" class="active">Login</button>
+                <button onclick="showTab('register')">Registrar</button>
+            </div>
+
+            <!-- Formulário de Login -->
+            <div id="login-form" class="form-box">
+                <h2>Entrar</h2>
+                <input type="email" id="login-email" placeholder="E-mail" value="joao@example.com">
+                <input type="password" id="login-password" placeholder="Senha" value="Senha@123">
+                <button onclick="handleLogin()">Fazer Login</button>
+                <p><small>Dica: Use as credenciais do Seed ou crie um novo.</small></p>
+            </div>
+
+            <!-- Formulário de Registro -->
+            <div id="register-form" class="form-box" style="display: none;">
+                <h2>Criar Conta</h2>
+                <input type="text" id="reg-name" placeholder="Nome Completo">
+                <input type="email" id="reg-email" placeholder="E-mail">
+                <input type="password" id="reg-password" placeholder="Senha">
+                <button onclick="handleRegister()">Registrar</button>
+            </div>
+        </div>
+
+        <!-- Seção do Usuário Logado (Dashboard) -->
+        <div id="dashboard-section" style="display: none;">
+            <div class="card">
+                <h2>👋 Olá, <span id="user-name">Usuário</span>!</h2>
+                <p>Seu e-mail: <span id="user-email">...</span></p>
+                <hr>
+                <div class="actions">
+                    <button onclick="getProfile()" class="btn-info">Testar Rota Protegida (/me)</button>
+                    <button onclick="handleRefreshToken()" class="btn-warning">Refresh Token</button>
+                    <button onclick="handleLogout()" class="btn-danger">Sair (Logout)</button>
+                </div>
+            </div>
+            
+            <div class="token-display">
+                <h3>Seu Access Token (JWT):</h3>
+                <textarea id="access-token-display" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
